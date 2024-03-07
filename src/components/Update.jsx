@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Update = () => {
   const { id } = useParams();
@@ -53,6 +54,11 @@ const Update = () => {
         updatedUser
       );
       navigate('/');
+      toast.warn('User is Edited!', {
+        position: "bottom-right",
+        closeButton: true,
+        theme: "dark",
+        });
       console.log(res);
     } catch (error) {
       console.log(error);

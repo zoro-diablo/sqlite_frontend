@@ -11,6 +11,7 @@ import {
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Create = () => {
   const navigate = useNavigate();
@@ -35,6 +36,11 @@ const Create = () => {
           status,
         }
       );
+      toast.success('User is Created!', {
+        position: "bottom-right",
+        closeButton: true,
+        theme: "dark",
+        });
       navigate('/');
       console.log(res);
     } catch (error) {

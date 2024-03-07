@@ -25,6 +25,8 @@ import { capitalize } from '../utils/data';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
 
 const statusColorMap = {
   active: 'success',
@@ -61,6 +63,11 @@ export default function Home() {
         .then((res) => {
           setUsers(users.filter((user) => user.id !== id));
           fetchUsers()
+          toast.error('User is Deleted!', {
+            position: "bottom-right",
+            closeButton: true,
+            theme: "dark",
+            });
           console.log(res);
         })
         .catch((err) => {
@@ -370,42 +377,44 @@ export default function Home() {
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
 
   return (
-    <Table
-      aria-label='Example table with custom cells, pagination and sorting'
-      isHeaderSticky
-      bottomContent={bottomContent}
-      bottomContentPlacement='outside'
-      classNames={{
-        wrapper: 'max-h-[382px]',
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode='multiple'
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement='outside'
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === 'actions' ? 'center' : 'start'}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={'No users found'} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <div>
+      <Table
+        aria-label='Example table with custom cells, pagination and sorting'
+        isHeaderSticky
+        bottomContent={bottomContent}
+        bottomContentPlacement='outside'
+        classNames={{
+          wrapper: 'max-h-[382px]',
+        }}
+        selectedKeys={selectedKeys}
+        selectionMode='multiple'
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement='outside'
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === 'actions' ? 'center' : 'start'}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={'No users found'} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
