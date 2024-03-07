@@ -15,6 +15,7 @@ import {
   Chip,
   User,
   Pagination,
+  Card,
 } from '@nextui-org/react';
 import { FaPlus } from 'react-icons/fa';
 import { FaEllipsisVertical } from 'react-icons/fa6';
@@ -26,7 +27,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
 
 const statusColorMap = {
   active: 'success',
@@ -54,27 +54,37 @@ export default function Home() {
     fetchUsers();
   }, []);
 
-  const handleDelete = (id) => {
-    const isConfirmed = window.confirm('Are you sure you want to delete?');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
 
-    if (isConfirmed) {
-      axios
-        .delete(`${import.meta.env.VITE_API_BASE_URL}/user/${id}`)
-        .then((res) => {
-          setUsers(users.filter((user) => user.id !== id));
-          fetchUsers()
-          toast.error('User is Deleted!', {
-            position: "bottom-right",
-            closeButton: true,
-            theme: "dark",
-            });
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+  const handleDelete = (id) => {
+    setUserIdToDelete(id);
+    setIsDialogOpen(true);
   };
+
+  const confirmDelete = () => {
+    axios
+      .delete(`${import.meta.env.VITE_API_BASE_URL}/user/${userIdToDelete}`)
+      .then((res) => {
+        setUsers(users.filter((user) => user.id !== userIdToDelete));
+        fetchUsers();
+        toast.error('User is Deleted!', {
+          position: 'bottom-right',
+          closeButton: true,
+          theme: 'dark',
+        });
+        setIsDialogOpen(false);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+  };
+
   const [filterValue, setFilterValue] = React.useState('');
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
@@ -378,6 +388,23 @@ export default function Home() {
 
   return (
     <div>
+      {isDialogOpen && (
+     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center z-50">
+     {isDialogOpen && (
+       <div className="bg-gray-800 bg-opacity-75 flex justify-center items-center w-full h-full">
+         <Card className="dialog-box w-[400px] p-5 bg-white">
+           <p>Are you sure you want to delete?</p>
+           <div className="flex justify-end gap-2 mt-4">
+             <Button color="danger" onClick={confirmDelete}>Yes</Button>
+             <Button onClick={cancelDelete}>No</Button>
+           </div>
+         </Card>
+       </div>
+     )}
+   </div>
+   
+     
+      )}
       <Table
         aria-label='Example table with custom cells, pagination and sorting'
         isHeaderSticky
